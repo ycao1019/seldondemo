@@ -1,0 +1,16 @@
+1. run train.ipynb, get 3 artifacts: 
+	input_transformer.pkl
+	model.pkl
+	test_data.csv
+2. copy input_transformer.pkl under transformer folder; set transformer folder the working path, run this command: s2i build . seldonio/seldon-core-s2i-python3:1.15.0-dev demo-transformer-image, 
+	try to run it to see if there is any error: docker run -p 5000:9000 --rm demo-transformer-image
+
+3. copy model.pkl under model folder; set model folder the working path, run this command: s2i build . seldonio/seldon-core-s2i-python3:1.15.0-dev demo-model-image
+	try to run it to see if there is any error: docker run -p 5000:5000 --rm demo-model-image
+	
+4. run "kind load docker-image demo-transformer-image --name seldon" and "kind load docker-image demo-model-image --name seldon"
+
+5. in deploy.json file, make sure under containers, set "imagePullPolicy" to "Never" 
+
+6. go to seldondemo folder, run "kubectl apply -f deploy.json"
+

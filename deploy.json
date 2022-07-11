@@ -1,0 +1,49 @@
+{
+    "apiVersion": "machinelearning.seldon.io/v1alpha2",
+    "kind": "SeldonDeployment",
+    "metadata": {
+        "name": "boston-demo",
+		"namespace": "seldon-system"
+    },
+    "spec": {
+        "name": "seldon-pipeline",
+        "predictors": [{
+            "componentSpecs": [{
+                "spec": {
+                    "containers": [{
+                            "name": "input-transformer",
+                            "image": "demo-transformer-image",
+							"imagePullPolicy": "Never"
+                        },
+                        {
+                            "name": "regressor",
+                            "image": "demo-model-image",
+							"imagePullPolicy": "Never"
+                        }
+                    ],
+                    "terminationGracePeriodSeconds": 10
+                }
+            }],
+            "graph": {
+                "name": "input-transformer",
+                "endpoint": {
+                    "type": "REST"
+                },
+                "type": "TRANSFORMER",
+                "children": [{
+                    "name": "regressor",
+                    "endpoint": {
+                        "type": "REST"
+                    },
+                    "type": "MODEL",
+                    "children": []
+                }]
+            },
+            "name": "boston-predictor",
+            "replicas": 1,
+            "annotations": {
+                "predictor_version": "v1"
+            }
+        }]
+    }
+}
